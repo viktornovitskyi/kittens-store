@@ -8,18 +8,18 @@ services:
       POSTGRES_USER: postgres_user
       POSTGRES_PASSWORD: postgres_pass
   tests:
-    build: .
-    command: sh run_tests.sh
+    image: vnovitskyi/assignment-kittens-store
+    command: [ 'sh', 'run_tests.sh' ]
     depends_on:
       - db
     environment:
       RAILS_ENV: tests
       DATABASE_URL: postgres://postgres_user:postgres_pass@db:5432/kittens_store_test
   app:
-    build: .
+    image: vnovitskyi/assignment-kittens-store
     ports:
       - "1234:1234"
-    command: ["sh", "-c" "run_app.sh"]
+    command: ['sh', 'run_app.sh']
     depends_on:
       - db
     environment:
