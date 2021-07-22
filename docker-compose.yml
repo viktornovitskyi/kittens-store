@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     environment:
-      RAILS_ENV: tests
+      RACK_ENV: tests
       DATABASE_URL: postgres://postgres_user:postgres_pass@db:5432/kittens_store_test
   app:
     image: vnovitskyi/assignment-kittens-store
@@ -23,5 +23,5 @@ services:
     depends_on:
       - db
     environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://postgres_user:postgres_pass@db:5432/kittens_store_dev
+      RACK_ENV: development
+      DATABASE_URL: postgres://postgres:123456789@rds-kittens-new.c3hoz9row3ji.us-east-1.rds.amazonaws.com:5432/kittens_store_dev
