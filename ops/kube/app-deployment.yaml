@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kitten-app
+  template:
+    metadata:
+      labels:
+        app: kitten-app
+    spec:
+      containers:
+        - name: kitten-app
+          image: vnovitskyi/assignment-kittens-store
+          command: [ "sleep" ]
+          args: ['infinity']
+          ports:
+            - containerPort: 1234
+          env:
+            - name: RACK_ENV
+              value: development
+            - name: DATABASE_URL
+              value: postgres://app:pass@postgresql-service:5432
