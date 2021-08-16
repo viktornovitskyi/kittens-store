@@ -15,8 +15,8 @@ spec:
       containers:
         - name: kitten-app
           image: vnovitskyi/assignment-kittens-store
-          command: [ "sleep" ]
-          args: ['infinity']
+          command: [ "bundle", "exec" ]
+          args: ["rackup --port 1234 --host 0.0.0.0"]
           ports:
             - containerPort: 1234
           env:
