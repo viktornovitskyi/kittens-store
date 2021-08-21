@@ -1,8 +1,11 @@
 app:
   name: kittens
 envvars:
-  database_url: postgres://app:pass@postgresql-service:5432
+  database_url: postgres://postgres:lMQSpAaS43bfT2xF@kittens-rds20210821100829918200000001.ckh7xfijjfey.eu-central-1.rds.amazonaws.com:5432/kittens_dev
   rack_env: development
+
+postgress:
+  enabled: false
 
 image:
   repository: vnovitskyi/assignment-kittens-store
