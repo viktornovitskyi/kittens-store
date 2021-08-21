@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.app.name }}-db-migrate
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          command: ["sh","-c","{{ .Values.migrations.command }}"]
+          image: {{ .Values.image.repository }}
+          env:
+            - name: RACK_ENV
+              value: {{ .Values.envvars.rack_env }}
+            - name: DATABASE_URL
+              value: {{ .Values.envvars.database_url }}

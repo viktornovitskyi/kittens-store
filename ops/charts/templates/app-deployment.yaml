@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-app-deployment
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.webserver.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-app
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}-app
+          image: {{ .Values.image.repository }}
+          command: ["sh","-c","{{ .Values.webserver.command }}"]
+          ports:
+            - containerPort: {{ .Values.webserver.port }}
+          env:
+            - name: RACK_ENV
+              value: {{ .Values.envvars.rack_env }}
+            - name: DATABASE_URL
+              value: {{ .Values.envvars.database_url }}

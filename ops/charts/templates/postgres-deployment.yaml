@@ -1,11 +1,10 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: postgresql-deployment
   labels:
     app: postgresql
 spec:
-  serviceName: postgresql-db-service
   replicas: 1
   selector:
     matchLabels:
