@@ -18,10 +18,11 @@ resource "aws_internet_gateway" "global-igw" {
 }
 
 resource "aws_subnet" "global-subnets" {
-  for_each          = var.availability_zone_names
-  cidr_block        = cidrsubnet(aws_vpc.global-vpc.cidr_block, 8, index(local.availability_zone_names, each.key) + 1)
-  vpc_id            = aws_vpc.global-vpc.id
-  availability_zone = each.key
+  for_each                = var.availability_zone_names
+  cidr_block              = cidrsubnet(aws_vpc.global-vpc.cidr_block, 8, index(local.availability_zone_names, each.key) + 1)
+  vpc_id                  = aws_vpc.global-vpc.id
+  availability_zone       = each.key
+  map_public_ip_on_launch = var.is_public
   tags = {
     Name : "${var.project_name}-public-${index(local.availability_zone_names, each.key)}",
     created : "tf"

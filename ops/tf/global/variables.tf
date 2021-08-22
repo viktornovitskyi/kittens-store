@@ -1,1 +1,1 @@
-variable "project_name" { default = "ops" }
+variable "project_name" { default = "ops-test" }

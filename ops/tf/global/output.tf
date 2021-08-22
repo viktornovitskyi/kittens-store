@@ -26,3 +26,10 @@ output "database_connection_url" {
   sensitive = true
 }
 
+output "puts_database_connection_url" {
+  value = "terraform output database_connection_url"
+}
+
+output "eks-cluster-endpoint" {
+  value = module.web-eks-cluster.endpoint
+}
