@@ -1,7 +1,3 @@
-locals {
-  cluster_name = "eks-1"
-}
-
 resource "aws_iam_role" "eks_cluster" {
   # The name of the role
   name = "eks-cluster"
@@ -39,7 +35,7 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_service_policy" {
 
 resource "aws_security_group" "eks-sg" {
   vpc_id      = var.vpc.vpc_id
-  name_prefix = "${local.cluster_name}-api-access"
+  name_prefix = "${var.cluster_name}-api-access"
   ingress {
     description = "Allow global connection"
     cidr_blocks = ["0.0.0.0/0"]
@@ -52,15 +48,15 @@ resource "aws_security_group" "eks-sg" {
   }
 
   tags = {
-    Name : "${var.project_name}-eks-sg",
+    Name : "${var.cluster_name}-eks-sg",
     created : "tf"
   }
 }
 
 resource "aws_eks_cluster" "cluster" {
-  name            = "${var.project_name}-${local.cluster_name}"
-  role_arn        = aws_iam_role.eks_cluster.arn
-  version = "1.18"
+  name     = var.cluster_name
+  role_arn = aws_iam_role.eks_cluster.arn
+  version  = "1.18"
 
   vpc_config {
     endpoint_public_access  = true
@@ -70,7 +66,7 @@ resource "aws_eks_cluster" "cluster" {
   }
 
   tags = {
-    Name : "${var.project_name}-${local.cluster_name}-cluster",
+    Name : "${var.cluster_name}-cluster",
     created : "tf"
   }
 }

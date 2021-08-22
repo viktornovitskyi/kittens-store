@@ -1,4 +1,4 @@
-variable "project_name" {}
+variable "cluster_name" {}
 variable "vpc" {
   type = object({
     vpc_id     = string
