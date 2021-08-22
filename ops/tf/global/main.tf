@@ -76,12 +76,9 @@ module "web-eks-cluster" {
   }
 }
 
-//module "web-eks-node-groups" {
-//  source       = "../modules/aws-eks-node-groups"
-//  project_name = local.project_name
-//  eks_cluster_name = module.web-eks-cluster.cluster_name
-//  vpc = {
-//    vpc_id     = module.vpc.vpc_id
-//    subnet_ids = [for subnet in module.vpc.subnets : subnet.id]
-//  }
-//}
+module "web-eks-node-groups" {
+  source           = "../modules/aws-eks-node-groups"
+  project_name     = local.project_name
+  eks_cluster_name = module.web-eks-cluster.cluster_name
+  subnet_ids       = module.private_networks.subnets.*.id
+}

@@ -8,7 +8,7 @@ resource "aws_subnet" "network" {
   vpc_id                  = var.vpc.vpc_id
   cidr_block              = element(var.cidr_blocks, count.index)
   availability_zone       = element(var.vpc.availability_zones, count.index)
-  tags                    = merge(var.tags, map("Name", "${var.name_prefix}-${count.index}"))
+  tags                    = merge(var.tags, tomap({ "Name" = "${var.name_prefix}-${count.index}" }))
 }
 
 resource "aws_route_table_association" "global-rta-1" {
