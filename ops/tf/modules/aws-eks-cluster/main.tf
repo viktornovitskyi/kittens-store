@@ -56,7 +56,7 @@ resource "aws_security_group" "eks-sg" {
 resource "aws_eks_cluster" "cluster" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks_cluster.arn
-  version  = "1.18"
+  version  = "1.20"
 
   vpc_config {
     endpoint_public_access  = true

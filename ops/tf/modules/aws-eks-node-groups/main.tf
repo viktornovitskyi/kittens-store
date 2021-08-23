@@ -40,7 +40,7 @@ resource "aws_eks_node_group" "nodes_general" {
   cluster_name    = var.eks_cluster_name
   node_group_name = "${var.project_name}-nodes-general"
   node_role_arn   = aws_iam_role.nodes_general.arn
-  version         = "1.18"
+  version         = "1.20"
 
   # Identifiers of EC2 Subnets to associate with the EKS Node Group.
   # These subnets must have the following resource tag: kubernetes.io/cluster/CLUSTER_NAME

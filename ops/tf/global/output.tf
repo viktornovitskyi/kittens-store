@@ -1,17 +1,16 @@
 locals {
-  db      = module.main-database
-  subnets = concat(module.public_networks.subnets, module.private_networks.subnets)
+  db = module.main-database
 }
 output "vpc_id" {
   value = module.vpc.vpc_id
 }
 
 output "subnet_ids" {
-  value = concat(module.public_networks.subnets.*.id, module.private_networks.subnets.*.id)
+  value = [for subnet in module.vpc.subnets : subnet.id]
 }
 
 output "availability_zones" {
-  value = [for subnet in local.subnets : "${subnet.id} => ${subnet.availability_zone}"]
+  value = [for subnet in module.vpc.subnets : "${subnet.id} => ${subnet.availability_zone}"]
 }
 
 output "database_host" {
