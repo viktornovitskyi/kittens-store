@@ -16,7 +16,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 2.6.6
           bundler-cache: true
       - name: Run linters
         run: bundle exec rubocop --parallel
