@@ -12,7 +12,7 @@ RSpec.describe KittensStore::Routes::Kittens do
       last_response.body
     end
 
-    context 'no kittens' do
+    context 'when no kittens' do
       it 'shows correct count' do
         expect(app_response).to include('0 kittens')
       end

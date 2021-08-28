@@ -6,13 +6,13 @@ RSpec.describe KittensStore::App do
     described_class
   end
 
-  it 'should mount landing' do
+  it 'mounts landing' do
     get '/'
 
     expect(last_response).to be_ok
   end
 
-  it 'should mount kittens' do
+  it 'mounts kittens' do
     get '/kittens/info'
 
     expect(last_response).to be_ok
