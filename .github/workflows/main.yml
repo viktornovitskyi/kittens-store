@@ -68,4 +68,4 @@ jobs:
           bundle exec rake db:migrate
 
       - name: Run tests
-        run: bundle exec rake
+        run: bundle exec rspec
