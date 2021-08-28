@@ -36,15 +36,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      RACK_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
-
     services:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: pass
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -63,9 +60,15 @@ jobs:
           bundler-cache: true
 
       - name: Create database
+        env:
+          RACK_ENV: test
+          DATABASE_URL: postgres://app:pass@localhost:5432
         run: |
           bundle exec rake db:create
           bundle exec rake db:migrate
 
       - name: Run tests
+        env:
+          RACK_ENV: test
+          DATABASE_URL: postgresql://app:pass@localhost:5432
         run: bundle exec rspec
