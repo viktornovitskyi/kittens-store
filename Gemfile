@@ -10,6 +10,11 @@ gem 'pg', '~> 0.18'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 
+group :development do
+  gem 'rubocop', '0.89'
+  gem 'rubocop-junit-formatter', require: false
+end
+
 group :test do
   gem 'rspec'
   gem 'rack-test'
