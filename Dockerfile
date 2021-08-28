@@ -1,4 +1,4 @@
-ARG RUBY_VERSION=ruby:2.6-alpine3.13
+ARG RUBY_VERSION=ruby:2.6.6-alpine3.13
 
 FROM ${RUBY_VERSION} AS GEMS
 
