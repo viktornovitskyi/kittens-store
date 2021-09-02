@@ -20,6 +20,6 @@ jobs:
         with:
           image: vnovitskyi/assignment-kittens-store
           registry: docker.io
-          tags: v1.0
+          tags: ${{ github.sha }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
