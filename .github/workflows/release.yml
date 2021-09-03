@@ -8,7 +8,6 @@ on:
     types: [ completed ]
 
 env:
-
   AWS_REGION: eu-central-1
   CLUSTER_NAME: eks-1
   
