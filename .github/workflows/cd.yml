@@ -27,12 +27,21 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
+      - name: Generate build ID
+        id: prep
+        run: |
+          branch=${GITHUB_REF##*/}
+          sha=${GITHUB_SHA::8}
+          ts=$(date +%s)
+          nm=${{ github.run_number }}
+          echo "::set-output name=BUILD_ID::${branch}-${sha}-${ts}-${nm}"
+
       - name: Build & push Docker image to Dockerhub
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
           image: vnovitskyi/assignment-kittens-store
           registry: docker.io
-          tags: ${{ github.sha }}
+          tags: ${{ steps.prep.outputs.BUILD_ID }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
