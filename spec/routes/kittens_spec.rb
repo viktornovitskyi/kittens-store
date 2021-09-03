@@ -14,6 +14,7 @@ RSpec.describe KittensStore::Routes::Kittens do
 
     context 'when no kittens' do
       it 'shows correct count' do
+        sleep 60
         expect(app_response).to include('0 kittens')
       end
     end
