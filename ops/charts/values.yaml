@@ -1,7 +1,7 @@
 app:
   name: kittens
 envvars:
-  database_url: postgres://postgres:lMQSpAaS43bfT2xF@kittens-rds20210821100829918200000001.ckh7xfijjfey.eu-central-1.rds.amazonaws.com:5432/kittens_dev
+  database_url: postgres://postgres:YT4FLkTUEIcBpRqf@kittens-rds20210903120039053200000007.ckh7xfijjfey.eu-central-1.rds.amazonaws.com:5432/kittens_dev
   rack_env: development
 
 postgress:
