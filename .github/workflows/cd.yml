@@ -32,7 +32,7 @@ jobs:
         run: |
           branch=${GITHUB_REF##*/}
           sha=${GITHUB_SHA::8}
-          ts=$(date +%s)
+          ts=$(date +'%Y-%m-%dT%H:%M:%S')
           nm=${{ github.run_number }}
           echo "::set-output name=BUILD_ID::${branch}-${sha}-${ts}-${nm}"
 
