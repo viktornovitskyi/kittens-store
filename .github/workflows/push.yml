@@ -14,11 +14,19 @@ env:
   
 jobs:
   publish:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: "Release to AWS"
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout Code
         uses: actions/checkout@v2.3.4
+        
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: master
+          running-workflow-name: 'Release to AWS'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
 
       - name: Build & push Docker image to Dockerhub
         uses: mr-smithers-excellent/docker-build-push@v5
