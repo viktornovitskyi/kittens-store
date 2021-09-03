@@ -62,7 +62,7 @@ jobs:
         run: kubectl get nodes
 
       - name: Deploy Helm Chart
-        run: helm upgrade kittens ./ops/charts
+        run: helm install kittens ./ops/charts
 
       - name: Get Deployments
         run: kubectl get deployments
