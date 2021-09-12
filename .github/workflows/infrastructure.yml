@@ -81,7 +81,7 @@ jobs:
         run: exit 1
 
       - name: Output VPC id
-      - id: vpc_id_output
+        id: vpc_id_output
         run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
       - name: Save db_url to artifact
