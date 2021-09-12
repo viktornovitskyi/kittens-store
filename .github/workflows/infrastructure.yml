@@ -11,7 +11,7 @@ jobs:
     name: "Infrastructure plan"
     runs-on: ubuntu-latest
     outputs:
-      output2: ${{ steps.plan.outputs.vpc_id }}
+      output2: ${{ steps.step2.outputs.vpc_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
