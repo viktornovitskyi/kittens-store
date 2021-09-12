@@ -5,13 +5,14 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-defaults:
-  run:
-    working-directory: ./tf/global/
+
 jobs:
   infrastructure-plan:
     name: "Infrastructure plan"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tf/global/
     steps:
       - name: Checkout
         uses: actions/checkout@v2
