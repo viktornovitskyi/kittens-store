@@ -1,11 +1,6 @@
 name: "destroy infrastructure"
 
-on:
-  workflow_dispatch
-
-  schedule:
-    # At 00:00 every day
-    - cron: '0 0 * * *'
+on: workflow_dispatch
 
 jobs:
   cleanup-infrastructure:
