@@ -23,16 +23,15 @@ module "vpc" {
   }
 }
 
+module "main-database" {
+  source  = "../modules/aws-rds-instance"
+  db_name = "kittens_dev"
+  vpc = {
+    vpc_id     = module.vpc.vpc_id
+    subnet_ids = [for subnet in module.vpc.subnets : subnet.id]
+  }
+}
 
-//module "main-database" {
-//  source  = "../modules/aws-rds-instance"
-//  db_name = "kittens_dev"
-//  vpc = {
-//    vpc_id     = module.vpc.vpc_id
-//    subnet_ids = [for subnet in module.vpc.subnets : subnet.id]
-//  }
-//}
-//
 //module "web-eks-cluster" {
 //  source       = "../modules/aws-eks-cluster"
 //  cluster_name = local.cluster_name
