@@ -1,73 +1,73 @@
-name: CI
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-jobs:
-  rubocop:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6.6
-          bundler: Gemfile.lock
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Install dependencies
-        run: |
-          bundle config path ~/.bundle
-          bundle install --jobs 4 --retry 3
-      - name: Run rubocop
-        run: bundle exec rubocop --parallel
-        
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: app
-          POSTGRES_PASSWORD: pass
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-      - uses: actions/checkout@v2.3.4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6.6
-          bundler-cache: true
-
-      - name: Create database
-        env:
-          RACK_ENV: test
-          DATABASE_URL: postgres://app:pass@localhost:5432
-        run: |
-          bundle exec rake db:create
-          bundle exec rake db:migrate
-
-      - name: Run tests
-        env:
-          RACK_ENV: test
-          DATABASE_URL: postgresql://app:pass@localhost:5432
-        run: bundle exec rspec
+#name: CI
+#
+#on:
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+#
+#jobs:
+#  rubocop:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: 2.6.6
+#          bundler: Gemfile.lock
+#      - name: Cache dependencies
+#        uses: actions/cache@v1
+#        with:
+#          path: ~/.bundle
+#          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gems-
+#      - name: Install dependencies
+#        run: |
+#          bundle config path ~/.bundle
+#          bundle install --jobs 4 --retry 3
+#      - name: Run rubocop
+#        run: bundle exec rubocop --parallel
+#
+#  test:
+#    runs-on: ubuntu-latest
+#
+#    services:
+#      postgres:
+#        image: postgres:12
+#        env:
+#          POSTGRES_USER: app
+#          POSTGRES_PASSWORD: pass
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#        ports:
+#          - 5432:5432
+#
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: 2.6.6
+#          bundler-cache: true
+#
+#      - name: Create database
+#        env:
+#          RACK_ENV: test
+#          DATABASE_URL: postgres://app:pass@localhost:5432
+#        run: |
+#          bundle exec rake db:create
+#          bundle exec rake db:migrate
+#
+#      - name: Run tests
+#        env:
+#          RACK_ENV: test
+#          DATABASE_URL: postgresql://app:pass@localhost:5432
+#        run: bundle exec rspec
