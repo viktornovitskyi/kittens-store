@@ -93,4 +93,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -chdir=ops/tf/global/ -lock=true -auto-approve
+        run: terraform -chdir=ops/tf/global/ apply -lock=true -auto-approve
