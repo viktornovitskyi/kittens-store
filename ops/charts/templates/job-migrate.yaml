@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.app.name }}-db-migrate
+  name: {{ .Values.app.name }}-db-migrate-{{ .Release.Revision }}
 spec:
   template:
     spec:

@@ -8,24 +8,40 @@ on:
     types: [ completed ]
 
 env:
-
   AWS_REGION: eu-central-1
   CLUSTER_NAME: eks-1
   
 jobs:
   publish:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: "Release to AWS"
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout Code
         uses: actions/checkout@v2.3.4
+        
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: master
+          running-workflow-name: 'Release to AWS'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - name: Generate build ID
+        id: prep
+        run: |
+          branch=${GITHUB_REF##*/}
+          sha=${GITHUB_SHA::8}
+          ts=$(date +'%Y-%m-%d')
+          nm=${{ github.run_number }}
+          echo "::set-output name=BUILD_ID::${branch}-${sha}-${ts}-${nm}"
 
       - name: Build & push Docker image to Dockerhub
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
           image: vnovitskyi/assignment-kittens-store
           registry: docker.io
-          tags: ${{ github.sha }}
+          tags: ${{ steps.prep.outputs.BUILD_ID }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
@@ -44,3 +60,15 @@ jobs:
           
       - name:  Test cluster access
         run: kubectl get nodes
+
+      - name: Deploy Helm Chart
+        run: helm upgrade --install kittens ./ops/charts
+
+      - name: Get Deployments
+        run: kubectl get deployments
+
+      - name: Get Services
+        run: kubectl get services
+
+      - name: Get Pods
+        run: kubectl get pods
