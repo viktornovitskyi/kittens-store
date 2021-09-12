@@ -84,6 +84,13 @@ jobs:
       - id: vpc_id_output
         run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
+      - id: tf_output_file
+      - run: echo terraform-bin -chdir=ops/tf/global/ output vpc_id > tf_output.txt
+      - uses: actions/upload-artifact@v2
+        with:
+         path: tf_output.txt
+         name: tf_output
+
   job2:
     runs-on: ubuntu-latest
     needs: infrastructure-plan
@@ -91,6 +98,20 @@ jobs:
       - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
 
 
+  job_3:
+    name: Display results
+    needs: infrastructure-plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download math result for infrastructure-plan
+        uses: actions/download-artifact@v2
+        with:
+          name: tf_output
+      - name: Print the final result
+        shell: bash
+        run: |
+          value=`cat tf_output.txt`
+          echo The result is $value
 
   infrastructure-apply:
     name: "Infrastructure apply"
