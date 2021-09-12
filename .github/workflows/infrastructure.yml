@@ -89,7 +89,7 @@ jobs:
 
       - name: Call terraform output
         run: |
-          output=$(terraform output database_connection_url)
+          output=$(terraform output vpc_id)
           echo $output
 
 
