@@ -81,7 +81,7 @@ jobs:
         run: exit 1
 
       - id: step2
-        run: echo "::set-output name=test::vpc_idvpc_idvpc_id"
+        run: echo "::set-output name=vpc_id::vpc_idvpc_idvpc_id"
 
   job2:
     runs-on: ubuntu-latest
