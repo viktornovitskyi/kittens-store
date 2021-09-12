@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  infrastructure-plan:
+  cleanup-infrastructure:
     name: "Infrastructure destroy"
     runs-on: ubuntu-latest
     steps:
