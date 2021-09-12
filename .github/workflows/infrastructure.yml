@@ -88,9 +88,9 @@ jobs:
           retention-days: 5
 
       - name: Call terraform output
-      run: |
-        output=$(terraform output database_connection_url)
-        echo $output
+        run: |
+          output=$(terraform output database_connection_url)
+          echo $output`
 
 
   infrastructure-apply:
