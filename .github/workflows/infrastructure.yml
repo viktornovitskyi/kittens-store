@@ -79,14 +79,6 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: 'Upload Artifact'
-        continue-on-error: true
-        uses: actions/upload-artifact@v2
-        with:
-          name: terraform-plan-artifact
-          path: plan.out
-          retention-days: 5
-
       - name: Call terraform output
         run: |
           output=$(terraform output vpc_id)
