@@ -1,0 +1,29 @@
+name: "destroy infrastructure"
+
+on:
+  schedule:
+    # At 00:00 every day
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  infrastructure-plan:
+    name: "Infrastructure destroy"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=ops/tf/global/ init
+
+      - name: Terraform Destroy
+        id: destroy
+        if: github.event_name == 'pull_request'
+        run: terraform -chdir=ops/tf/global/ destroy -auto-approve
