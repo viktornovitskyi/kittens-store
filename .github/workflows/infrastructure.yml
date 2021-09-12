@@ -25,6 +25,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           # terraform_version: 0.13.0:
+          terraform_wrapper: false
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
@@ -85,6 +86,11 @@ jobs:
           name: terraform-plan-artifact
           path: plan.out
           retention-days: 5
+
+      - name: Call terraform output
+      run: |
+        output=$(terraform output database_connection_url)
+        echo $output
 
 
   infrastructure-apply:
