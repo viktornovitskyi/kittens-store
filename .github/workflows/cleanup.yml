@@ -1,7 +1,6 @@
 name: "destroy infrastructure"
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   cleanup-infrastructure:
