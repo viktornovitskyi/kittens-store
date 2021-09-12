@@ -82,7 +82,7 @@ jobs:
         run: exit 1
 
       - id: step2
-        run: echo "::set-output name=vpc_id::$(terraform -chdir=ops/tf/global/ output vpc_id)"
+        run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
   job2:
     runs-on: ubuntu-latest
