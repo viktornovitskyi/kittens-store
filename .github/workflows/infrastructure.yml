@@ -76,29 +76,28 @@ jobs:
               body: output
             })
 
-
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
+      - name: Output VPC id
       - id: vpc_id_output
         run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
-      - name: Save outputs to file
-        run: terraform-bin -chdir=ops/tf/global/ output vpc_id > tf_output.txt
+      - name: Save db_url to artifact
+        run: terraform-bin -chdir=ops/tf/global/ output database_connection_url > db_url.txt
 
       - name: Create output artifact
         uses: actions/upload-artifact@v2
         with:
-         path: tf_output.txt
-         name: tf_output
+         path: db_url.txt
+         name: db_url
 
   job2:
     runs-on: ubuntu-latest
     needs: infrastructure-plan
     steps:
       - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
-
 
   job_3:
     name: Display results
@@ -108,11 +107,11 @@ jobs:
       - name: Download math result for infrastructure-plan
         uses: actions/download-artifact@v2
         with:
-          name: tf_output
+          name: db_url
       - name: Print the final result
         shell: bash
         run: |
-          value=`cat tf_output.txt`
+          value=`cat db_url.txt`
           echo The result is $value
 
   infrastructure-apply:
