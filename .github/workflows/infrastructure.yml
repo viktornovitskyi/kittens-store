@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: infrastructure-apply
     steps:
-      - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
+      - run: echo ${{needs.infrastructure-apply.outputs.vpc_id}}
 
   show-artifacts:
     name: Print out cluster name and database URL
