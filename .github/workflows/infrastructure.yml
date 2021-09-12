@@ -11,7 +11,7 @@ jobs:
     name: "Infrastructure plan"
     runs-on: ubuntu-latest
     outputs:
-      output2: ${{ steps.step2.outputs.vpc_id }}
+      vpc_id: ${{ steps.vpc_id_output.outputs.vpc_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -81,14 +81,14 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - id: step2
+      - id: vpc_id_output
         run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
   job2:
     runs-on: ubuntu-latest
     needs: infrastructure-plan
     steps:
-      - run: echo ${{needs.infrastructure-plan.outputs.output2}}
+      - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
 
 
 
