@@ -100,20 +100,6 @@ jobs:
       - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
 
 
-  job_3:
-    name: Display results
-    needs: infrastructure-plan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download math result for infrastructure-plan
-        uses: actions/download-artifact@v2
-        with:
-          name: tf_output
-      - name: Print the final result
-        shell: bash
-        run: |
-          value=`cat tf_output.txt`
-          echo The result is $value
 
   infrastructure-apply:
     name: "Infrastructure apply"
