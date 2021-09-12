@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./tf/global/
+        working-directory: tf/global/
     steps:
       - name: Checkout
         uses: actions/checkout@v2
