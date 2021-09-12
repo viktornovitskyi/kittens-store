@@ -84,8 +84,10 @@ jobs:
       - id: vpc_id_output
         run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
 
-      - id: tf_output_file
+      - name: Save outputs to file
       - run: echo terraform-bin -chdir=ops/tf/global/ output vpc_id > tf_output.txt
+
+      - name: Create output artifact
       - uses: actions/upload-artifact@v2
         with:
          path: tf_output.txt
