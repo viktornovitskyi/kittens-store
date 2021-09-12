@@ -123,13 +123,13 @@ jobs:
   output-vpc-id:
     name: Output VPC ID
     runs-on: ubuntu-latest
-    needs: infrastructure-plan
+    needs: infrastructure-apply
     steps:
       - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
 
   show-artifacts:
     name: Print out cluster name and database URL
-    needs: infrastructure-plan
+    needs: infrastructure-apply
     runs-on: ubuntu-latest
     steps:
       - name: Download db_url result for infrastructure-plan
