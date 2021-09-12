@@ -76,12 +76,13 @@ jobs:
               body: output
             })
 
+
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
       - id: step2
-        run: echo "::set-output name=vpc_id::vpc_idvpc_idvpc_id"
+        run: echo "::set-output name=vpc_id::{{terraform output vpc_id}}"
 
   job2:
     runs-on: ubuntu-latest
