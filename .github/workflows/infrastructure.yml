@@ -10,8 +10,6 @@ jobs:
   infrastructure-plan:
     name: "Infrastructure plan"
     runs-on: ubuntu-latest
-    outputs:
-      vpc_id: ${{ steps.vpc_id_output.outputs.vpc_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -80,44 +78,11 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: Output VPC id
-        id: vpc_id_output
-        run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
-
-      - name: Save db_url to artifact
-        run: terraform-bin -chdir=ops/tf/global/ output database_connection_url > db_url.txt
-
-      - name: Create output artifact
-        uses: actions/upload-artifact@v2
-        with:
-         path: db_url.txt
-         name: db_url
-
-  output-vpc-id:
-    name: Output VPC ID
-    runs-on: ubuntu-latest
-    needs: infrastructure-plan
-    steps:
-      - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
-
-  show-artifacts:
-    name: Print out cluster name and database URL
-    needs: infrastructure-plan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download db_url result for infrastructure-plan
-        uses: actions/download-artifact@v2
-        with:
-          name: db_url
-      - name: Print the db_url
-        shell: bash
-        run: |
-          value=`cat db_url.txt`
-          echo The result is $value
-
   infrastructure-apply:
     name: "Infrastructure apply"
     runs-on: ubuntu-latest
+    outputs:
+      vpc_id: ${{ steps.vpc_id_output.outputs.vpc_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -141,3 +106,38 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform -chdir=ops/tf/global/ apply -auto-approve
+
+      - name: Output VPC id
+        id: vpc_id_output
+        run: echo "::set-output name=vpc_id::$(terraform-bin -chdir=ops/tf/global/ output vpc_id)"
+
+      - name: Save db_url to artifact
+        run: terraform-bin -chdir=ops/tf/global/ output database_connection_url > db_url.txt
+
+      - name: Create output artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: db_url.txt
+          name: db_url
+
+  output-vpc-id:
+    name: Output VPC ID
+    runs-on: ubuntu-latest
+    needs: infrastructure-plan
+    steps:
+      - run: echo ${{needs.infrastructure-plan.outputs.vpc_id}}
+
+  show-artifacts:
+    name: Print out cluster name and database URL
+    needs: infrastructure-plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download db_url result for infrastructure-plan
+        uses: actions/download-artifact@v2
+        with:
+          name: db_url
+      - name: Print the db_url
+        shell: bash
+        run: |
+          value=`cat db_url.txt`
+          echo The result is $value
