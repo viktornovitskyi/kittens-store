@@ -90,7 +90,7 @@ jobs:
       - name: Call terraform output
         run: |
           output=$(terraform output database_connection_url)
-          echo $output`
+          echo $output
 
 
   infrastructure-apply:
