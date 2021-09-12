@@ -86,9 +86,9 @@ jobs:
           echo $output
   job2:
     runs-on: ubuntu-latest
-    needs: infrastructure
+    needs: infrastructure-plan
     steps:
-      - run: echo ${{needs.infrastructure.outputs.output2}}
+      - run: echo ${{needs.infrastructure-plan.outputs.output2}}
 
 
 
