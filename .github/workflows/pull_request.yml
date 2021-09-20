@@ -222,7 +222,9 @@ jobs:
 
       - name: Get application url
         id: get_application_url
-        run: echo "::set-output name=url::$(kubectl get services kittens-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+        run: |
+          echo "::set-output name=url::$(kubectl get services --namespace=${PULL_REQUEST_ID}kittens-app-service \
+            --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 
       - name: Test application url
         run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
