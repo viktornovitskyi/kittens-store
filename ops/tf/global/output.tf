@@ -1,6 +1,7 @@
 locals {
   db = module.main-database
 }
+
 output "vpc_id" {
   value = module.vpc.vpc_id
 }
@@ -26,10 +27,11 @@ output "database_connection_url" {
   sensitive = true
 }
 
-output "puts_database_connection_url" {
-  value = "terraform output database_connection_url"
-}
-
 output "eks-cluster-endpoint" {
   value = module.web-eks-cluster.endpoint
 }
+
+output "eks-cluster-name" {
+  value = module.web-eks-cluster.cluster_name
+}
+

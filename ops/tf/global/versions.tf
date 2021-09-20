@@ -1,6 +1,6 @@
 terraform {
   # pin terraform version
-  required_version = "1.0.3"
+  required_version = "1.0.7"
 
   # required providers for our bootcamp with version pinning
   required_providers {

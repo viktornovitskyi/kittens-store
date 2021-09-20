@@ -23,7 +23,6 @@ module "vpc" {
   }
 }
 
-
 module "main-database" {
   source  = "../modules/aws-rds-instance"
   db_name = "kittens_dev"
