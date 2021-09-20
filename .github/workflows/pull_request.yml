@@ -6,6 +6,7 @@ on:
 
 env:
   PULL_REQUEST_ID: pr-${{ github.event.pull_request.number }}
+  AWS_REGION: eu-central-1
 
 jobs:
   build:
