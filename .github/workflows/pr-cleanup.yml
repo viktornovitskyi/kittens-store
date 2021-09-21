@@ -2,9 +2,10 @@ name: "Destroy PR infrastructure"
 
 on:
   pull_request:
-    types: [ closed ]
-  branches:
-    - master
+    types:
+      - closed
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       pr_id:
