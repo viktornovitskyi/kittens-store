@@ -232,11 +232,6 @@ jobs:
         with:
           name: db_url
 
-      - name: Download db_url artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: db_url
-
       - name: Set DB_URL env value
         run: |
           value=`cat db_url.txt`
@@ -304,7 +299,8 @@ jobs:
       - name: Test application url
         run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
 
-      - uses: actions/github-script@0.9.0
+      - name: Add application url comment
+        uses: actions/github-script@0.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -312,5 +308,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: ${{ steps.get_application_url.outputs.url }}
+              body: 123
             })
