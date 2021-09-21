@@ -118,7 +118,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
@@ -209,7 +208,7 @@ jobs:
       - name: Create output artifact
         uses: actions/upload-artifact@v2
         with:
-          path: db_url.txt
+          path: ops/tf/pull_request/db_url.txt
           name: db_url
 
       - name: Save eks_cluster to artifact
@@ -218,7 +217,7 @@ jobs:
       - name: Create output artifact
         uses: actions/upload-artifact@v2
         with:
-          path: eks_cluster.txt
+          path: ops/tf/pull_request/eks_cluster.txt
           name: eks_cluster
 
   deploy:
@@ -227,11 +226,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Download db_url artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: db_url
 
       - name: Download db_url artifact
         uses: actions/download-artifact@v2
@@ -305,7 +299,8 @@ jobs:
       - name: Test application url
         run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
 
-      - uses: actions/github-script@0.9.0
+      - name: Add application url comment
+        uses: actions/github-script@0.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -313,5 +308,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: ${{ steps.get_application_url.outputs.url }}
+              body: "${{ steps.get_application_url.outputs.url }}"
             })
