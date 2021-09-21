@@ -140,7 +140,6 @@ jobs:
         continue-on-error: true
 
       - uses: actions/github-script@0.9.0
-        if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
@@ -306,3 +305,14 @@ jobs:
 
       - name: Test application url
         run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
+
+      - uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ${{ steps.get_application_url.outputs.url }}
+            })
