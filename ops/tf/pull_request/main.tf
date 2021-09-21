@@ -20,7 +20,7 @@ data "terraform_remote_state" "remote" {
 module "pr-database" {
   source  = "../modules/aws-rds-instance"
   db_name = "kittens_dev"
-  role = var.pull_request_id
+  role    = var.pull_request_id
   vpc = {
     vpc_id     = local.global_state.outputs.vpc_id
     subnet_ids = local.global_state.outputs.subnet_ids
