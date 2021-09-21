@@ -11,6 +11,9 @@ jobs:
   infrastructure:
     name: "Infrastructure apply"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ops/tf/global/
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,7 +23,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -28,13 +31,13 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        run: terraform -chdir=ops/tf/global/ init
+        run: terraform init
 
       - name: Terraform Apply
-        run: terraform -chdir=ops/tf/global/ apply -auto-approve
+        run: terraform apply -auto-approve
 
       - name: Save db_url to artifact
-        run: terraform-bin -chdir=ops/tf/global/ output database_connection_url > db_url.txt
+        run: terraform-bin output database_connection_url > db_url.txt
 
       - name: Create output artifact
         uses: actions/upload-artifact@v2
@@ -43,7 +46,7 @@ jobs:
           name: db_url
 
       - name: Save eks_cluster to artifact
-        run: terraform-bin -chdir=ops/tf/global/ output eks-cluster-name > eks_cluster.txt
+        run: terraform-bin output eks-cluster-name > eks_cluster.txt
 
       - name: Create output artifact
         uses: actions/upload-artifact@v2

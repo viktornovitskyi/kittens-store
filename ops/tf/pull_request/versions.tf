@@ -12,7 +12,7 @@ terraform {
 
   backend "s3" {
     bucket = "devops-bootcamp"
-    key    = "pull_request/state.tfstate"
+    key    = "pull_request/${var.pull_request_id}/state.tfstate"
     region = "eu-central-1"
   }
 }

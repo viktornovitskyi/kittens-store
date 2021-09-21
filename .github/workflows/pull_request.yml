@@ -98,13 +98,90 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+  infrastructure-live-plan:
+    name: "Infrastructure live plan"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ops/tf/global/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@0.9.0
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
   infrastructure:
     name: "Infrastructure"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./ops/tf/pull_request/
     steps:
-      - name: view the PR number
-        run: |
-          echo "${{ env.PULL_REQUEST_ID }}"
+      - name: View the PR number
+        run: echo "${{ env.PULL_REQUEST_ID }}"
+        working-directory: ./
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -114,7 +191,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -122,13 +199,13 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        run: terraform -chdir=ops/tf/pull_request/ init -backend-config="key=path/${PULL_REQUEST_ID}.tfstate"
+        run: terraform init -backend-config="key=path/${{ env.PULL_REQUEST_ID }}.tfstate"
 
       - name: Terraform Apply
-        run: terraform -chdir=ops/tf/pull_request/ apply -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
+        run: terraform apply -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
 
       - name: Save db_url to artifact
-        run: terraform-bin -chdir=ops/tf/pull_request/ output database_connection_url > db_url.txt
+        run: terraform-bin output database_connection_url > db_url.txt
 
       - name: Create output artifact
         uses: actions/upload-artifact@v2
@@ -137,7 +214,7 @@ jobs:
           name: db_url
 
       - name: Save eks_cluster to artifact
-        run: terraform-bin -chdir=ops/tf/pull_request/ output eks-cluster-name > eks_cluster.txt
+        run: terraform-bin output eks-cluster-name > eks_cluster.txt
 
       - name: Create output artifact
         uses: actions/upload-artifact@v2
@@ -206,25 +283,36 @@ jobs:
       - name: Deploy Helm Chart
         run: |
           helm upgrade --install kittens \
-            --namespace=${PULL_REQUEST_ID} --create-namespace --wait \
+            --namespace=${{ env.PULL_REQUEST_ID }} --create-namespace --wait \
             --set envvars.database_url=${DB_URL} \
             --set image.repository=${DOCKER_IMAGE} \
             ./ops/charts
 
       - name: Get Deployments
-        run: kubectl get deployments --namespace=${PULL_REQUEST_ID}
+        run: kubectl get deployments --namespace=${{ env.PULL_REQUEST_ID }}
 
       - name: Get Services
-        run: kubectl get services --namespace=${PULL_REQUEST_ID}
+        run: kubectl get services --namespace=${{ env.PULL_REQUEST_ID }}
 
       - name: Get Pods
-        run: kubectl get pods --namespace=${PULL_REQUEST_ID}
+        run: kubectl get pods --namespace=${{ env.PULL_REQUEST_ID }}
 
       - name: Get application url
         id: get_application_url
         run: |
-          echo "::set-output name=url::$(kubectl get services --namespace=${PULL_REQUEST_ID} kittens-app-service \
+          echo "::set-output name=url::$(kubectl get services --namespace=${{ env.PULL_REQUEST_ID }} kittens-app-service \
             --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 
       - name: Test application url
         run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
+
+      - uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ${{ steps.get_application_url.outputs.url }}
+            })
