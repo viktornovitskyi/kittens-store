@@ -176,7 +176,6 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash
         working-directory: ./ops/tf/pull_request/
     steps:
       - name: View the PR number
