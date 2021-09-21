@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./ops/tf/pull_request/
+        working-directory: ./ops/tf/global/
     steps:
       - name: Checkout
         uses: actions/checkout@v2
