@@ -39,9 +39,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        id: init
         run: terraform init -backend-config="key=path/${{ env.PULL_REQUEST_ID }}.tfstate"
 
       - name: Terraform Destroy
-        id: destroy
         run: terraform destroy -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
