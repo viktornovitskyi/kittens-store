@@ -42,7 +42,7 @@ jobs:
       - name: Create output artifact
         uses: actions/upload-artifact@v2
         with:
-          path: /ops/tf/global/db_url.txt
+          path: ops/tf/global/db_url.txt
           name: db_url
 
       - name: Save eks_cluster to artifact
@@ -51,7 +51,7 @@ jobs:
       - name: Create output artifact
         uses: actions/upload-artifact@v2
         with:
-          path: /ops/tf/global/eks_cluster.txt
+          path: ops/tf/global/eks_cluster.txt
           name: eks_cluster
 
   build:
