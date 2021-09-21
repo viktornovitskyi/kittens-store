@@ -179,8 +179,8 @@ jobs:
       run:
         working-directory: ./ops/tf/pull_request/
     steps:
-#      - name: View the PR number
-#        run: echo ${{ env.PULL_REQUEST_ID }}
+      - name: View the PR number
+        run: echo "${{ env.PULL_REQUEST_ID }}"
 
       - name: Checkout
         uses: actions/checkout@v2
