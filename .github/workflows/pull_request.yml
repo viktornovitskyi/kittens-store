@@ -9,94 +9,94 @@ env:
   AWS_REGION: eu-central-1
 
 jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    services:
-#      postgres:
-#        image: postgres:12
-#        env:
-#          POSTGRES_USER: app
-#          POSTGRES_PASSWORD: pass
-#        options: >-
-#          --health-cmd pg_isready
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#        ports:
-#          - 5432:5432
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: 2.6.6
-#          bundler: Gemfile.lock
-#
-#      - name: Cache dependencies
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.bundle
-#          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gems-
-#
-#      - name: Install dependencies
-#        run: |
-#          bundle config path ~/.bundle
-#          bundle install --jobs 4 --retry 3
-#
-#      - name: Run rubocop
-#        run: bundle exec rubocop --parallel
-#
-#      - name: Create database
-#        env:
-#          RACK_ENV: test
-#          DATABASE_URL: postgres://app:pass@localhost:5432
-#        run: |
-#          bundle exec rake db:create
-#          bundle exec rake db:migrate
-#
-#      - name: Run tests
-#        env:
-#          RACK_ENV: test
-#          DATABASE_URL: postgresql://app:pass@localhost:5432
-#        run: bundle exec rspec
-#
-#      - name: Generate build ID
-#        id: docker_build_id
-#        run: |
-#          branch=${GITHUB_REF##*/}
-#          sha=${GITHUB_SHA::8}
-#          ts=$(date +'%Y-%m-%d')
-#          nm=${{ github.run_number }}
-#          echo "::set-output name=BUILD_ID::${branch}-${sha}-${ts}-${nm}"
-#
-#      - name: Save docker image to artifact
-#        run: echo "vnovitskyi/assignment-kittens-store:${{ steps.docker_build_id.outputs.BUILD_ID }}" > docker_image.txt
-#
-#      - name: Create docker image output artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          path: docker_image.txt
-#          name: docker_image
-#
-#      - name: Build & push Docker image to Dockerhub
-#        uses: mr-smithers-excellent/docker-build-push@v5
-#        with:
-#          image: vnovitskyi/assignment-kittens-store
-#          registry: docker.io
-#          tags: ${{ steps.docker_build_id.outputs.BUILD_ID }}
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-#
-#      - name: Configure AWS client
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ env.AWS_REGION }}
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.6
+          bundler: Gemfile.lock
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Install dependencies
+        run: |
+          bundle config path ~/.bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Run rubocop
+        run: bundle exec rubocop --parallel
+
+      - name: Create database
+        env:
+          RACK_ENV: test
+          DATABASE_URL: postgres://app:pass@localhost:5432
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:migrate
+
+      - name: Run tests
+        env:
+          RACK_ENV: test
+          DATABASE_URL: postgresql://app:pass@localhost:5432
+        run: bundle exec rspec
+
+      - name: Generate build ID
+        id: docker_build_id
+        run: |
+          branch=${GITHUB_REF##*/}
+          sha=${GITHUB_SHA::8}
+          ts=$(date +'%Y-%m-%d')
+          nm=${{ github.run_number }}
+          echo "::set-output name=BUILD_ID::${branch}-${sha}-${ts}-${nm}"
+
+      - name: Save docker image to artifact
+        run: echo "vnovitskyi/assignment-kittens-store:${{ steps.docker_build_id.outputs.BUILD_ID }}" > docker_image.txt
+
+      - name: Create docker image output artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: docker_image.txt
+          name: docker_image
+
+      - name: Build & push Docker image to Dockerhub
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: vnovitskyi/assignment-kittens-store
+          registry: docker.io
+          tags: ${{ steps.docker_build_id.outputs.BUILD_ID }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Configure AWS client
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
   infrastructure-live-plan:
     name: "Infrastructure live plan"
@@ -113,7 +113,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: eu-central-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -172,133 +172,135 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-#  infrastructure:
-#    name: "Infrastructure"
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: view the PR number
-#        run: |
-#          echo "${{ env.PULL_REQUEST_ID }}"
-#
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-west-2
-#
-#      - name: Setup Terraform
-#        uses: hashicorp/setup-terraform@v1
-#        with:
-#          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-#
-#      - name: Terraform Init
-#        run: terraform -chdir=ops/tf/pull_request/ init -backend-config="key=path/${PULL_REQUEST_ID}.tfstate"
-#
-#      - name: Terraform Apply
-#        run: terraform -chdir=ops/tf/pull_request/ apply -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
-#
-#      - name: Save db_url to artifact
-#        run: terraform-bin -chdir=ops/tf/pull_request/ output database_connection_url > db_url.txt
-#
-#      - name: Create output artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          path: db_url.txt
-#          name: db_url
-#
-#      - name: Save eks_cluster to artifact
-#        run: terraform-bin -chdir=ops/tf/pull_request/ output eks-cluster-name > eks_cluster.txt
-#
-#      - name: Create output artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          path: eks_cluster.txt
-#          name: eks_cluster
-#
-#  deploy:
-#    needs: [build, infrastructure]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Download db_url artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: db_url
-#
-#      - name: Download db_url artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: db_url
-#
-#      - name: Set DB_URL env value
-#        run: |
-#          value=`cat db_url.txt`
-#          echo "DB_URL=$value" >> $GITHUB_ENV
-#
-#      - name: Download eks claster artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: eks_cluster
-#
-#      - name: Set CLUSTER_NAME env value
-#        run: |
-#          value=`cat eks_cluster.txt | tr -d '"'`
-#          echo "CLUSTER_NAME=$value" >> $GITHUB_ENV
-#
-#      - name: Download docker image artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: docker_image
-#
-#      - name: Set DOCKER_IMAGE env value
-#        run: |
-#          value=`cat docker_image.txt`
-#          echo "DOCKER_IMAGE=$value" >> $GITHUB_ENV
-#
-#      - name: Configure AWS client
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ env.AWS_REGION }}
-#
-#      - name:  Login to cluster
-#        run: >
-#          aws eks update-kubeconfig
-#          --region ${AWS_REGION}
-#          --name ${CLUSTER_NAME}
-#
-#      - name:  Test cluster access
-#        run: kubectl get nodes
-#
-#      - name: Deploy Helm Chart
-#        run: |
-#          helm upgrade --install kittens \
-#            --namespace=${PULL_REQUEST_ID} --create-namespace --wait \
-#            --set envvars.database_url=${DB_URL} \
-#            --set image.repository=${DOCKER_IMAGE} \
-#            ./ops/charts
-#
-#      - name: Get Deployments
-#        run: kubectl get deployments --namespace=${PULL_REQUEST_ID}
-#
-#      - name: Get Services
-#        run: kubectl get services --namespace=${PULL_REQUEST_ID}
-#
-#      - name: Get Pods
-#        run: kubectl get pods --namespace=${PULL_REQUEST_ID}
-#
-#      - name: Get application url
-#        id: get_application_url
-#        run: |
-#          echo "::set-output name=url::$(kubectl get services --namespace=${PULL_REQUEST_ID} kittens-app-service \
-#            --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
-#
-#      - name: Test application url
-#        run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
+  infrastructure:
+    name: "Infrastructure"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ops/tf/pull_request/
+    steps:
+      - name: View the PR number
+        run: echo "${{ env.PULL_REQUEST_ID }}"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="key=path/${PULL_REQUEST_ID}.tfstate"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
+
+      - name: Save db_url to artifact
+        run: terraform-bin output database_connection_url > db_url.txt
+
+      - name: Create output artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: db_url.txt
+          name: db_url
+
+      - name: Save eks_cluster to artifact
+        run: terraform-bin output eks-cluster-name > eks_cluster.txt
+
+      - name: Create output artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: eks_cluster.txt
+          name: eks_cluster
+
+  deploy:
+    needs: [build, infrastructure]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download db_url artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: db_url
+
+      - name: Download db_url artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: db_url
+
+      - name: Set DB_URL env value
+        run: |
+          value=`cat db_url.txt`
+          echo "DB_URL=$value" >> $GITHUB_ENV
+
+      - name: Download eks claster artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: eks_cluster
+
+      - name: Set CLUSTER_NAME env value
+        run: |
+          value=`cat eks_cluster.txt | tr -d '"'`
+          echo "CLUSTER_NAME=$value" >> $GITHUB_ENV
+
+      - name: Download docker image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker_image
+
+      - name: Set DOCKER_IMAGE env value
+        run: |
+          value=`cat docker_image.txt`
+          echo "DOCKER_IMAGE=$value" >> $GITHUB_ENV
+
+      - name: Configure AWS client
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name:  Login to cluster
+        run: >
+          aws eks update-kubeconfig
+          --region ${AWS_REGION}
+          --name ${CLUSTER_NAME}
+
+      - name:  Test cluster access
+        run: kubectl get nodes
+
+      - name: Deploy Helm Chart
+        run: |
+          helm upgrade --install kittens \
+            --namespace=${PULL_REQUEST_ID} --create-namespace --wait \
+            --set envvars.database_url=${DB_URL} \
+            --set image.repository=${DOCKER_IMAGE} \
+            ./ops/charts
+
+      - name: Get Deployments
+        run: kubectl get deployments --namespace=${PULL_REQUEST_ID}
+
+      - name: Get Services
+        run: kubectl get services --namespace=${PULL_REQUEST_ID}
+
+      - name: Get Pods
+        run: kubectl get pods --namespace=${PULL_REQUEST_ID}
+
+      - name: Get application url
+        id: get_application_url
+        run: |
+          echo "::set-output name=url::$(kubectl get services --namespace=${PULL_REQUEST_ID} kittens-app-service \
+            --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+
+      - name: Test application url
+        run: sleep 60 && curl ${{ steps.get_application_url.outputs.url }}
