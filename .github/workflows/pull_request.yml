@@ -182,6 +182,7 @@ jobs:
     steps:
       - name: View the PR number
         run: echo "${{ env.PULL_REQUEST_ID }}"
+        working-directory: ./
 
       - name: Checkout
         uses: actions/checkout@v2
