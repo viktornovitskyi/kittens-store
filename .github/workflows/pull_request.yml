@@ -180,8 +180,7 @@ jobs:
         working-directory: ./ops/tf/pull_request/
     steps:
       - name: View the PR number
-        run: |
-          echo "${PULL_REQUEST_ID}"
+        run: echo ${{ env.PULL_REQUEST_ID }}
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -199,7 +198,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        run: terraform init -backend-config="key=path/${PULL_REQUEST_ID}.tfstate"
+        run: terraform init -backend-config="key=path/${{ env.PULL_REQUEST_ID }}.tfstate"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="pull_request_id=${{ env.PULL_REQUEST_ID }}"
@@ -283,24 +282,24 @@ jobs:
 #      - name: Deploy Helm Chart
 #        run: |
 #          helm upgrade --install kittens \
-#            --namespace=${PULL_REQUEST_ID} --create-namespace --wait \
+#            --namespace=${{ env.PULL_REQUEST_ID }} --create-namespace --wait \
 #            --set envvars.database_url=${DB_URL} \
 #            --set image.repository=${DOCKER_IMAGE} \
 #            ./ops/charts
 #
 #      - name: Get Deployments
-#        run: kubectl get deployments --namespace=${PULL_REQUEST_ID}
+#        run: kubectl get deployments --namespace=${{ env.PULL_REQUEST_ID }}
 #
 #      - name: Get Services
-#        run: kubectl get services --namespace=${PULL_REQUEST_ID}
+#        run: kubectl get services --namespace=${{ env.PULL_REQUEST_ID }}
 #
 #      - name: Get Pods
-#        run: kubectl get pods --namespace=${PULL_REQUEST_ID}
+#        run: kubectl get pods --namespace=${{ env.PULL_REQUEST_ID }}
 #
 #      - name: Get application url
 #        id: get_application_url
 #        run: |
-#          echo "::set-output name=url::$(kubectl get services --namespace=${PULL_REQUEST_ID} kittens-app-service \
+#          echo "::set-output name=url::$(kubectl get services --namespace=${{ env.PULL_REQUEST_ID }} kittens-app-service \
 #            --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 #
 #      - name: Test application url
