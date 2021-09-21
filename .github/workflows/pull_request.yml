@@ -101,7 +101,9 @@ jobs:
   infrastructure-live-plan:
     name: "Infrastructure live plan"
     runs-on: ubuntu-latest
-    working-directory: ops/tf/global/
+    defaults:
+      run:
+        working-directory: ./ops/tf/global/
     steps:
       - name: Checkout
         uses: actions/checkout@v2
